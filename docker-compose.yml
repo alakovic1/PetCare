@@ -1,0 +1,101 @@
+version: '3'
+
+services:
+
+  eureka:
+    container_name: eureka
+    image: docker-eureka
+    restart: on-failure
+    ports:
+      - 8761:8761
+    networks:
+      - petcare
+    build:
+      context: ./eureka_server
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  configserver:
+    container_name: config_server
+    image: docker-configserver
+    restart: on-failure
+    ports:
+      - 8888:8888
+    networks:
+      - petcare
+    build:
+      context: ./config_server
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - CONFIG_REPO_URI=https://github.com/alakovic1/config
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  api_gateway:
+    container_name: api_gateway
+    image: docker-api_gateway
+    restart: on-failure
+    ports:
+      - 8088:8088
+    networks:
+      - petcare
+    build:
+      context: ./api_gateway
+    environment:
+      - JAVA_OPTS=
+        - EUREKA_SERVER=http://eureka:8761/eureka
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+    depends_on:
+      - eureka
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+#  user_service_db:
+#    image: postgres:latest
+#    container_name: user_service_db
+#    ports:
+#      - 5432:5432
+#    networks:
+#      - petcare
+#    environment:
+#      - POSTGRES_USER=root
+#      - POSTGRES_PASSWORD=password
+
+  user_service:
+    container_name: user_service
+    image: docker-user_service
+    restart: on-failure
+    ports:
+      - 8080:8080
+    networks:
+      - petcare
+    build:
+      context: ./user_service
+    environment:
+      - JAVA_OPTS=
+        - EUREKA_SERVER=http://eureka:8761/eureka
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://user_service_db:5432/pet_care_user_service_db
+#      - SPRING_DATASOURCE_USERNAME=root
+#      - SPRING_DATASOURCE_PASSWORD=password
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+    depends_on:
+      - eureka
+#      - user_service_db
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+networks:
+  petcare:
+    driver: bridge

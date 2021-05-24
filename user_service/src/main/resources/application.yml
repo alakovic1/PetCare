@@ -12,11 +12,16 @@ spring:
   application:
     name: user_service
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://configserver:8888
   cloud:
     config:
       username: user
       password: password
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka
 
 encrypt:
   key: ruhdghu36878DTFGYuy7eu9heihGDYUHhduehfuieriro009238usG
