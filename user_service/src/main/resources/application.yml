@@ -12,7 +12,7 @@ spring:
   application:
     name: user_service
   config:
-    import: optional:configserver:http://configserver:8888
+    import: ${CONFIG_SERVER_URI}
   cloud:
     config:
       username: user
@@ -21,7 +21,7 @@ spring:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka:8761/eureka
+      defaultZone: ${EUREKA_SERVER}
 
 encrypt:
   key: ruhdghu36878DTFGYuy7eu9heihGDYUHhduehfuieriro009238usG

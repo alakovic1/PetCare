@@ -12,7 +12,7 @@ spring:
   application:
     name: comment_service
   config:
-    import: optional:configserver:http://localhost:8888
+    import: ${CONFIG_SERVER_URI}
   cloud:
     config:
       username: user
@@ -29,3 +29,8 @@ management:
 
 server:
   port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER}

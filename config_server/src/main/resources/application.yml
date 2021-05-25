@@ -6,7 +6,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/alakovic1/config
+          uri: ${CONFIG_REPO_URI}
   security:
     user:
       name: user
