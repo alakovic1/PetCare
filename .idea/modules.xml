@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/PetCare.iml" filepath="$PROJECT_DIR$/.idea/PetCare.iml" />
+      <module fileurl="file://$PROJECT_DIR$/adopt_service/adopt_serivce.iml" filepath="file://$PROJECT_DIR$/adopt_service/adopt_serivce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comment_service/comment_serivce.iml" filepath="file://$PROJECT_DIR$/comment_service/comment_serivce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/notification_service/notification_serivce.iml" filepath="file://$PROJECT_DIR$/notification_service/notification_serivce.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pet_category_service/pet_category_service.iml" filepath="file://$PROJECT_DIR$/pet_category_service/pet_category_service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/user_service/user_service.iml" filepath="file://$PROJECT_DIR$/user_service/pet_category_service.iml" />
+    </modules>
+  </component>
+</project>

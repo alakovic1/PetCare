@@ -1,0 +1,329 @@
+version: '2.1'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+        - 15672:15672
+    expose:
+        - 5672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "rabbitmq", "5672" ]
+      interval: 5s
+      timeout: 5s
+      retries: 50
+    networks:
+      - petcare
+
+  db:
+    image: postgres:latest
+    container_name: db
+    ports:
+      - 5432:5432
+    networks:
+      - petcare
+    volumes:
+      - ./databases.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=password
+
+  eureka:
+    container_name: eureka
+    image: docker-eureka
+    restart: on-failure
+    ports:
+      - 8761:8761
+    networks:
+      - petcare
+    build:
+      context: ./eureka_server
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  configserver:
+    container_name: configserver
+    image: docker-configserver
+    restart: on-failure
+    ports:
+      - 8888:8888
+    networks:
+      - petcare
+    build:
+      context: ./config_server
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - CONFIG_REPO_URI=https://github.com/alakovic1/config
+    healthcheck:
+      test: ["CMD", "curl", "-I", "http://configserver:8888"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  systemeventsservice:
+    container_name: systemeventsservice
+    image: docker-system_events_service
+    restart: on-failure
+    ports:
+      - 8085:8085
+    networks:
+      - petcare
+    build:
+      context: ./system_events_service
+    environment:
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_actions_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+    depends_on:
+      - db
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  userservice:
+    container_name: userservice
+    image: docker-user_service
+    restart: on-failure
+    ports:
+      - 8080:8080
+    networks:
+      - petcare
+    build:
+      context: ./user_service
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_user_service_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - eureka
+      - db
+      - systemeventsservice
+    depends_on:
+      configserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  petcategoryservice:
+    container_name: petcategoryservice
+    image: docker-pet_category_service
+    restart: on-failure
+    ports:
+      - 8084:8084
+    networks:
+      - petcare
+    build:
+      context: ./pet_category_service
+    volumes:
+      - ./pet_category_service/uploads:/uploads
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_pet_category_service_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - eureka
+      - db
+      - systemeventsservice
+      - userservice
+    depends_on:
+      configserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  adoptservice:
+    container_name: adoptservice
+    image: docker-adopt_service
+    restart: on-failure
+    ports:
+      - 8082:8082
+    networks:
+      - petcare
+    build:
+      context: ./adopt_service
+    volumes:
+      - ./adopt_service/uploads:/uploads
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_adopt_service_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - eureka
+      - db
+      - systemeventsservice
+      - userservice
+      - petcategoryservice
+    depends_on:
+      configserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  notificationservice:
+    container_name: notificationservice
+    image: docker-notification_service
+    restart: on-failure
+    ports:
+      - 8083:8083
+    networks:
+      - petcare
+    build:
+      context: ./notification_service
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_notification_service_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - eureka
+      - db
+      - systemeventsservice
+      - userservice
+      - adoptservice
+    depends_on:
+      configserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  commentservice:
+    container_name: commentservice
+    image: docker-comment_service
+    restart: on-failure
+    ports:
+      - 8081:8081
+    networks:
+      - petcare
+    build:
+      context: ./comment_service
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - EUREKA_SERVER=http://eureka:8761/eureka
+      - JDBC_DATABASE_URL=jdbc:postgresql://db:5432/pet_care_comment_service_db
+      - JDBC_DATABASE_USERNAME=root
+      - JDBC_DATABASE_PASSWORD=password
+      - CONFIG_SERVER_URI=optional:configserver:http://configserver:8888
+      - RABBITMQ_HOST=rabbitmq
+    depends_on:
+      - eureka
+      - db
+      - systemeventsservice
+      - userservice
+      - petcategoryservice
+    depends_on:
+      configserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  #API Gateway nazvan kao localhost...
+  #razlog je jer imamo dosta requestova na frontendu i da ne bi sve mijenjali ostavili smo localhost
+  localhost:
+    container_name: api_gateway
+    image: docker-api_gateway
+    restart: on-failure
+    ports:
+      - 8088:8088
+    networks:
+      - petcare
+    build:
+      context: ./api_gateway
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Xss256k
+      - USER_SERVICE_URL=http://userservice:8080
+      - COMMENT_SERVICE_URL=http://commentservice:8081
+      - ADOPT_SERVICE_URL=http://adoptservice:8082
+      - NOTIFICATION_SERVICE_URL=http://notificationservice:8083
+      - PET_CATEGORY_SERVICE_URL=http://petcategoryservice:8084
+    depends_on:
+      - eureka
+      - configserver
+      - systemeventsservice
+      - userservice
+      - petcategoryservice
+      - adoptservice
+      - commentservice
+      - notificationservice
+      - db
+      - rabbitmq
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+
+  frontend:
+    container_name: frontend
+    image: docker-web
+    stdin_open: true
+    build:
+      context: ./web
+    ports:
+      - 3000:3000
+    networks:
+      - petcare
+    depends_on:
+      - eureka
+      - configserver
+      - rabbitmq
+      - db
+      - systemeventsservice
+      - userservice
+      - petcategoryservice
+      - adoptservice
+      - notificationservice
+      - commentservice
+      - localhost
+
+networks:
+  petcare:
+    driver: bridge

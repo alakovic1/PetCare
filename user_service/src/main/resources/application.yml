@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  application:
+    name: user_service
+  config:
+    import: ${CONFIG_SERVER_URI}
+  cloud:
+    config:
+      username: user
+      password: password
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+
+encrypt:
+  key: ruhdghu36878DTFGYuy7eu9heihGDYUHhduehfuieriro009238usG
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 8080

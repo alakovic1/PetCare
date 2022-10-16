@@ -1,0 +1,28 @@
+zuul:
+  routes:
+    user_service:
+      path: /user_service_api/**
+      url: ${USER_SERVICE_URL}
+    comment_service:
+      path: /comment_service_api/**
+      url: ${COMMENT_SERVICE_URL}
+    adopt_service:
+      path: /adopt_service_api/**
+      url: ${ADOPT_SERVICE_URL}
+    notification_service:
+      path: /notification_service_api/**
+      url: ${NOTIFICATION_SERVICE_URL}
+    pet_category_service:
+      path: /pet_category_service_api/**
+      url: ${PET_CATEGORY_SERVICE_URL}
+  sensitive-headers:
+
+server:
+  port: 8088
+
+spring:
+  application:
+    name: api_gateway
+  servlet:
+    multipart:
+      max-file-size: 500MB

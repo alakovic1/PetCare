@@ -1,0 +1,47 @@
+.comments {
+  width: 95%;
+  margin: auto;
+}
+
+.comment {
+  box-shadow: 5px 5px 15px #e74c3c;
+  padding: 20px;
+  margin: 50px 0 0 0;
+}
+
+.reply {
+  box-shadow: 5px 5px 15px #e74c3c;
+  padding: 20px;
+  margin: 15px auto;
+  width: 95%;
+}
+
+.comment-info {
+  display: flex;
+}
+
+.comment-avatar {
+  flex: 0% 0;
+  width: 50px !important;
+  height: 50px;
+  align-self: center;
+}
+
+.info {
+  margin-left: 15px;
+}
+
+.reply-info {
+  display: flex;
+  align-items: center;
+}
+
+.div-btn-reply, .div-btn-comment {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.buttons:focus {
+  outline: 0;
+}
+

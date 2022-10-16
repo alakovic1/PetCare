@@ -1,0 +1,43 @@
+.profile-elements {
+    background: bisque;
+    width: 95%; 
+    margin: 30px auto; 
+}
+
+.tabs {
+    padding: 0px 50px 50px;
+
+    .tab {
+        margin-top: 10px;
+        color: rgba(0,0,0,0.6);
+        display: inline-block;
+        padding: 10px;
+        border-bottom: 2px solid rgba(0,0,0,0.2);
+        border-radius: 10px 10px 0 0;
+        cursor: pointer;
+        &:hover, &.active {
+            background: none;
+            border-bottom: 2px solid rgba(0,0,0,0.5);
+        }
+    }
+    
+  .content {
+    padding: 20px;
+    color: rgba(0,0,0,0.6);
+    background: rgba(255,255,255,0.2);
+  }
+}
+
+.imageInput {
+  font-size: 10px;
+}
+
+.deleteText {
+  border-top: 2px solid rgb(92, 92, 92);
+  padding-top: 10px;
+}
+
+.deleteBtn {
+  margin: auto;
+}
+  

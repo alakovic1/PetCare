@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ba.unsa.etf.nwt</groupId>
+    <artifactId>PetCare</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+	    <module>user_service</module>
+        <module>config_server</module>
+        <module>adopt_service</module>
+        <module>notification_service</module>
+        <module>pet_category_service</module>
+        <module>eureka_server</module>
+        <module>system_events_service</module>
+        <module>api_gateway</module>
+        <module>comment_service</module>
+    </modules>
+
+</project>

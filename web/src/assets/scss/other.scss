@@ -1,0 +1,83 @@
+.login-btn:focus {
+    outline: 0;
+}
+
+.adopt-div {
+    display: flex;
+
+    .btn:focus {
+        outline: 0;
+    }
+}
+
+button:focus {
+    outline: 0;
+}
+
+.sort-select:focus-visible {
+    outline: none;
+}
+
+.delete-btn {
+    float: right;
+}
+
+.benefit-name {
+    margin: auto;
+}
+
+.notification-containter {
+    position: relative;
+    margin: 10px 0;
+}
+
+.notification-title {
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
+.notifications {
+    position: absolute;
+    left: -200px;
+    width: 250px;
+    box-shadow: 5px 10px 8px 10px #5555;
+    border-radius: 25px;
+    color: #333;
+    top: 38px;
+    z-index: 10;
+    padding: 15px;
+    background: antiquewhite;
+    overflow-y: scroll;
+    height: 324px;
+}
+
+.notification-item {
+    padding: 10px 0;
+    border: 1px solid #3333;
+    border-left: none;
+    border-right: none;
+}
+
+.see-request {
+    text-align: right;
+    color: rgb(239, 68, 68);
+    cursor: pointer;
+}
+
+.paper {
+    background-color: #fff;
+    padding: 25px;
+    box-shadow: 5px 10px 8px 10px #5555;
+    border-radius: 25px;
+    color: #333;
+    opacity: 1;
+    position: absolute;
+    width: 600px;
+    top: 1%;
+    left: 28%;
+}
+
+.request-detail{
+    font-size: 18px;
+    padding: 10px 0;
+}

@@ -1,0 +1,42 @@
+spring:
+  datasource:
+    url: ${JDBC_DATABASE_URL}
+    username: ${JDBC_DATABASE_USERNAME}
+    password: ${JDBC_DATABASE_PASSWORD}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  application:
+    name: adopt_service
+  config:
+    import: ${CONFIG_SERVER_URI}
+  cloud:
+    config:
+      username: user
+      password: password
+  servlet:
+    multipart:
+      max-file-size: 500MB
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+
+encrypt:
+  key: ruhdghu36878DTFGYuy7eu9heihGDYUHhduehfuieriro009238usG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+server:
+  port: 8082
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVER}
+
