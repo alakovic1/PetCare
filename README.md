@@ -1,6 +1,6 @@
 # PetCare
 
-Ovaj projekat je realiziran na predmetu Napredne Web Tehnologije Elektrotehničkog fakulteta u Sarajevu, Master studij, 1. godina.
+Ovaj projekat je realiziran na predmetu Napredne Web Tehnologije Elektrotehničkog fakulteta u Sarajevu, Master studij, 1. godina. 
 
 Članovi tima (***Amile i ostali***) koji su učestvovali u realizaciji ovog projekta su:
 
